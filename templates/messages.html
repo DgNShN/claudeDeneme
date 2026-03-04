@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head><title>Mesajlar</title></head>
+<head>
+  <title>Mesajlar</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+    h1 { color: #333; }
+    .search-bar { margin-bottom: 20px; }
+    .search-bar input { padding: 8px 12px; width: 300px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+    .search-bar button { padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .search-bar button:hover { background: #45a049; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    th { background: #4CAF50; color: white; padding: 12px; text-align: left; }
+    td { padding: 12px; border-bottom: 1px solid #eee; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9f9f9; }
+    .delete-btn { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .delete-btn:hover { background: #c0392b; }
+    .no-msg { background: white; padding: 30px; text-align: center; border-radius: 8px; color: #777; }
+    .nav { margin-top: 20px; }
+    .nav a { color: #4CAF50; text-decoration: none; }
+    .nav a:hover { text-decoration: underline; }
+    .count { color: #777; font-size: 14px; margin-bottom: 10px; }
+  </style>
+</head>
 <body>
   <h1>Gelen Mesajlar</h1>
+
+  <div class="search-bar">
+    <form method="GET">
+      <input type="text" name="search" placeholder="Ara... (isim, email, mesaj)" value="{{ search }}">
+      <button type="submit">Ara</button>
+      {% if search %}
+        <a href="/messages" style="margin-left:10px; color:#e74c3c;">Temizle</a>
+      {% endif %}
+    </form>
+  </div>
+
   {% if messages %}
-    <table border="1" cellpadding="8">
-      <tr><th>ID</th><th>İsim</th><th>Email</th><th>Mesaj</th><th>Tarih</th></tr>
+    <p class="count">{{ messages|length }} mesaj bulundu.</p>
+    <table>
+      <tr><th>ID</th><th>İsim</th><th>Email</th><th>Mesaj</th><th>Tarih</th><th>Sil</th></tr>
       {% for msg in messages %}
       <tr>
         <td>{{ msg.id }}</td>
@@ -13,12 +47,24 @@
         <td>{{ msg.email }}</td>
         <td>{{ msg.message }}</td>
         <td>{{ msg.created_at }}</td>
+        <td>
+          <form method="POST" action="/messages/delete/{{ msg.id }}" onsubmit="return confirm('Silmek istediğinize emin misiniz?')">
+            <button type="submit" class="delete-btn">Sil</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </table>
   {% else %}
-    <p>Henüz mesaj yok.</p>
+    <div class="no-msg">
+      {% if search %}
+        "{{ search }}" için sonuç bulunamadı.
+      {% else %}
+        Henüz mesaj yok.
+      {% endif %}
+    </div>
   {% endif %}
-  <a href="/">Ana Sayfa</a>
+
+  <div class="nav"><a href="/">Ana Sayfa</a></div>
 </body>
 </html>
