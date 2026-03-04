@@ -60,6 +60,7 @@ def messages():
     conn.close()
     return render_template('messages.html', messages=rows)
 
+init_db()
+
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
+    app.run(debug=os.getenv('FLASK_DEBUG', 'False') == 'True')
